@@ -138,8 +138,13 @@
         }
 
         table.dataTable { width: 100% !important; margin: 0 !important; }
-        table.dataTable thead th { background-color: var(--azul-institucional) !important; padding: 12px !important; border-bottom: none !important; color: white !important; }
-        table.dataTable tbody td { padding: 12px 15px !important; border-bottom: 1px solid #3e4b5b !important; }
+        table.dataTable tbody td {
+    padding: 16px 25px !important; /* más espacio vertical y horizontal */
+}
+
+table.dataTable thead th {
+    padding: 16px 25px !important; /* igual para encabezados */
+}
         
         .dataTables_filter input { width: 200px !important; margin-left: 10px !important; }
 
