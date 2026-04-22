@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Inventario TI - Responsive Dark</title>
+    <title>Inventario TI - Tabla Responsive</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+    
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
     <style>
         :root {
@@ -22,136 +24,96 @@
             margin: 0 auto;
             background-color: var(--fondo-oscuro);
             box-sizing: border-box;
-            font-size: 16px; /* Previene zoom en iOS */
+            font-size: 16px; 
         }
 
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .main-container { max-width: 1200px; margin: 0 auto; }
 
         h1 { text-align: center; color: var(--azul-institucional); margin-bottom: 25px; }
 
         /* Pestañas */
-        .tabs { 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .tab-btn { 
-            flex: 1;
-            max-width: 300px;
-            text-align: center;
-            cursor: pointer; 
-            padding: 14px; 
-            border-radius: 8px; 
-            border: 1px solid #444; 
-            background: var(--fondo-paneles); 
-            color: #fff;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            flex: 1; max-width: 300px; text-align: center; cursor: pointer; 
+            padding: 14px; border-radius: 8px; border: 1px solid #444; 
+            background: var(--fondo-paneles); color: #fff; font-weight: bold; transition: 0.3s;
         }
-
-        .tab-btn.active { 
-            background: var(--azul-institucional); 
-            border-color: var(--azul-institucional); 
-            box-shadow: 0 4px 15px rgba(74, 134, 232, 0.3);
-        }
-
+        .tab-btn.active { background: var(--azul-institucional); border-color: var(--azul-institucional); }
         .tab-content { display: none; width: 100%; animation: fadeIn 0.4s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FORMULARIO RESPONSIVE */
+        /* Formulario */
         #formInventario {
-            max-width: 800px; /* Un poco más ancho para aprovechar el escritorio */
-            margin: 0 auto;
-            background: var(--fondo-paneles);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 800px; margin: 0 auto; background: var(--fondo-paneles);
+            padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
-        /* La magia del Grid: 1 columna por defecto (Móvil) */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        /* Excepción para escritorio: 2 columnas */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .full-width {
-                grid-column: span 2; /* Notas y botón ocupan todo el ancho */
-            }
+            .form-grid { grid-template-columns: 1fr 1fr; }
+            .full-width { grid-column: span 2; }
         }
-
         .form-group { display: flex; flex-direction: column; }
         .form-group label { margin-bottom: 5px; font-weight: bold; color: #a0aec0; font-size: 0.9rem; }
         
         input, select, textarea {
-            background: #1a202c !important;
-            border: 1px solid #444 !important;
-            color: white !important;
-            padding: 12px !important;
-            border-radius: 5px;
-            width: 100% !important;
-            box-sizing: border-box;
+            background: #1a202c !important; border: 1px solid #444 !important;
+            color: white !important; padding: 12px !important; border-radius: 5px; width: 100% !important;
         }
 
         #btnEnviar {
-            background-color: var(--azul-institucional);
-            color: white;
-            border: none;
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
+            background-color: var(--azul-institucional); color: white; border: none;
+            padding: 16px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            width: 100%; border-radius: 8px; margin-top: 10px;
         }
 
-        /* TABLA Y CONTENEDOR */
+        /* --- MEJORAS EN LA TABLA RESPONSIVE --- */
         .header-tabla {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap; /* Si no cabe en móvil, baja de línea */
-            gap: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
         }
 
         .tabla-container {
-            width: 100%;
-            overflow-x: auto; /* SCROLL LATERAL */
-            background: var(--fondo-paneles);
-            border-radius: 10px;
-            padding: 15px;
-            box-sizing: border-box;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%; background: var(--fondo-paneles); border-radius: 10px;
+            padding: 20px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        table.dataTable { width: 100% !important; margin: 0 !important; }
-        table.dataTable thead th { background-color: var(--azul-institucional) !important; padding: 12px !important; border-bottom: none !important; color: white !important; }
-        table.dataTable tbody td { padding: 12px 15px !important; border-bottom: 1px solid #3e4b5b !important; }
+        table.dataTable { width: 100% !important; border-collapse: collapse !important; }
         
-        .dataTables_filter input { width: 200px !important; margin-left: 10px !important; }
+        /* Más espacio en las celdas para que no esté pegado */
+        table.dataTable thead th { 
+            background-color: var(--azul-institucional) !important; 
+            padding: 16px 12px !important; /* Más altura */
+            color: white !important; 
+            border-bottom: 2px solid #202b38 !important;
+        }
+        
+        table.dataTable tbody td { 
+            padding: 16px 12px !important; /* Más espacio interior */
+            border-bottom: 1px solid #3e4b5b !important; 
+            vertical-align: middle;
+        }
 
+        /* Estilo del botón desplegable en móviles (+) */
+        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before, 
+        table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
+            background-color: var(--azul-institucional) !important;
+            box-shadow: none !important;
+            border: 2px solid white !important;
+            height: 18px !important;
+            width: 18px !important;
+            line-height: 18px !important;
+        }
+
+        .dataTables_filter input { width: 250px !important; margin-left: 10px !important; }
         .loading { text-align: center; padding: 20px; color: var(--azul-institucional); font-weight: bold; }
 
-        /* AJUSTES EXTRA PARA MÓVILES PEQUEÑOS */
         @media (max-width: 600px) {
             body { padding: 10px; }
-            #formInventario { padding: 15px; }
-            .tab-btn { padding: 12px 5px; font-size: 0.9rem; }
+            .tabla-container { padding: 10px; }
+            .dataTables_filter input { width: 100% !important; margin-left: 0 !important; margin-top: 10px !important;}
             .header-tabla { justify-content: center; }
-            .header-tabla button { width: 100%; }
+            .header-tabla button { width: 100%; padding: 15px; }
         }
     </style>
 </head>
@@ -172,12 +134,10 @@
                         <label>Nombre de Equipo</label>
                         <input type="text" name="pc_nombre" placeholder="Ej: PC-VENTAS-01" required>
                     </div>
-                    
                     <div class="form-group">
                         <label>Número de Serie</label>
                         <input type="text" name="serie" placeholder="S/N: XXXXXXXX" required>
                     </div>
-                    
                     <div class="form-group">
                         <label>Ubicación</label>
                         <select name="piso" required>
@@ -189,23 +149,19 @@
                             <option value="Piso 3">Piso 5</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label>Área</label>
                         <input type="text" name="area" placeholder="Ej: Recursos Humanos" required>
                     </div>
-                    
                     <div class="form-group full-width">
                         <label>Usuario Responsable</label>
                         <input type="text" name="usuario" placeholder="Nombre del trabajador" required>
                     </div>
-                    
                     <div class="form-group full-width">
                         <label>Notas Técnicas</label>
                         <textarea name="notas" rows="3" placeholder="RAM, Procesador, estado..."></textarea>
                     </div>
                 </div>
-                
                 <button type="submit" id="btnEnviar" class="full-width">💾 GUARDAR REGISTRO</button>
             </form>
         </div>
@@ -219,11 +175,11 @@
             <div id="loader" class="loading" style="display:none;">⏳ Sincronizando datos...</div>
             
             <div class="tabla-container">
-                <table id="tablaInventario" class="display nowrap">
+                <table id="tablaInventario" class="display cell-border" style="width:100%">
                     <thead>
                         <tr>
-                            <th>ID ACTIVO</th>
-                            <th>NOMBRE PC</th>
+                            <th>ID</th>
+                            <th>EQUIPO</th>
                             <th>SERIE</th>
                             <th>PISO</th>
                             <th>ÁREA</th>
@@ -238,6 +194,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     <script>
         const URL_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbzytWxR87UCFm2VpDUP5GhvqK4jj-4EXs_Hei6r--NTmy3ylmY1XSsrq6_7KgqJRy7-/exec"; 
@@ -297,10 +254,12 @@
                 
                 document.getElementById('cuerpoTabla').innerHTML = html;
                 
+                // INICIALIZACIÓN RESPONSIVE
                 dataTable = $('#tablaInventario').DataTable({
-                    scrollX: true, /* SCROLL LATERAL MANTENIDO */
+                    responsive: true, // <-- Esto activa la magia móvil
                     language: { 
-                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                        search: "Buscar:"
                     },
                     pageLength: 10,
                     dom: 'ftp'
