@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario TI - Dark Mode</title>
+    <title>Inventario TI - Full Width</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
     
@@ -14,24 +14,35 @@
             --azul-institucional: #4a86e8;
         }
 
+        /* AJUSTE CLAVE: Permitir que el cuerpo use todo el ancho en escritorio */
         body { 
-            max-width: 100%; 
-            padding: 15px; 
-            margin: 0;
-            background-color: #202b38; /* Color de fondo oscuro sólido */
+            max-width: 100% !important; 
+            width: 100% !important;
+            padding: 20px; 
+            margin: 0 auto;
+            background-color: #202b38;
+            box-sizing: border-box;
         }
 
-        h1 { text-align: center; color: var(--azul-institucional); margin-bottom: 20px; }
+        /* Contenedor principal centrado pero expandible */
+        .main-container {
+            max-width: 1200px; /* Ancho máximo para que no se vea infinito en monitores 4K */
+            margin: 0 auto;
+        }
+
+        h1 { text-align: center; color: var(--azul-institucional); margin-bottom: 30px; }
 
         /* Pestañas */
         .tabs { 
             display: flex; 
-            gap: 8px; 
+            gap: 10px; 
             margin-bottom: 25px;
+            justify-content: center;
         }
 
         .tab-btn { 
             flex: 1;
+            max-width: 300px;
             text-align: center;
             cursor: pointer; 
             padding: 14px; 
@@ -46,133 +57,132 @@
         .tab-btn.active { 
             background: var(--azul-institucional); 
             border-color: var(--azul-institucional); 
+            box-shadow: 0 4px 15px rgba(74, 134, 232, 0.3);
         }
 
-        .tab-content { display: none; }
+        .tab-content { display: none; width: 100%; }
         .tab-content.active { display: block; }
 
-        /* Mejoras en el Formulario */
-        input, select, textarea {
-            background: #2d3748 !important;
-            border: 1px solid #444 !important;
-            color: white !important;
-            padding: 12px !important;
+        /* Formulario centrado */
+        #formInventario {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2d3748;
+            padding: 25px;
+            border-radius: 10px;
         }
 
-        #btnEnviar {
-            background-color: var(--azul-institucional);
-            color: white;
-            border: none;
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-
-        /* MEJORAS EN LA LISTA (ESPACIADO) */
+        /* TABLA MEJORADA */
         .tabla-container {
             width: 100%;
             overflow-x: auto;
-            margin-top: 20px;
             background: #2d3748;
-            border-radius: 8px;
-            padding: 10px; /* Espacio interno del contenedor */
+            border-radius: 10px;
+            padding: 20px;
             box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         table.dataTable {
-            border-collapse: collapse !important;
-            margin: 10px 0 !important;
-        }
-
-        /* Espaciado de las celdas (Padding) */
-        table.dataTable tbody td, 
-        table.dataTable thead th {
-            padding: 15px 12px !important; /* Más espacio para que no esté pegado */
-            border-bottom: 1px solid #444;
+            width: 100% !important;
+            margin: 0 !important;
         }
 
         table.dataTable thead th {
             background-color: var(--azul-institucional) !important;
-            color: white !important;
-            text-transform: uppercase;
-            font-size: 0.85rem;
+            padding: 15px !important;
+            border-bottom: none !important;
         }
 
-        /* Estilo para los textos dentro de la tabla */
-        table.dataTable tbody tr {
-            background-color: #2d3748 !important;
-            color: #e2e8f0;
+        table.dataTable tbody td {
+            padding: 12px 15px !important;
+            border-bottom: 1px solid #3e4b5b !important;
         }
 
-        /* Buscador de DataTables en modo oscuro */
+        /* Estilo para el buscador de la tabla */
+        .dataTables_filter {
+            margin-bottom: 15px !important;
+        }
+
         .dataTables_filter input {
-            margin-left: 10px !important;
-            display: inline-block !important;
-            width: auto !important;
+            background: #1a202c !important;
+            border: 1px solid #444 !important;
+            border-radius: 5px;
+            padding: 8px !important;
+            width: 250px !important;
         }
 
         .loading { text-align: center; padding: 20px; color: var(--azul-institucional); font-weight: bold; }
+
+        /* Responsividad para móviles */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .tab-btn { padding: 10px; font-size: 0.8rem; }
+            #formInventario { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Gestión de Inventario</h1>
+    <div class="main-container">
+        <h1>Gestión de Inventario TI</h1>
 
-    <div class="tabs">
-        <div class="tab-btn active" onclick="openTab('registro')">REGISTRO</div>
-        <div class="tab-btn" onclick="openTab('consulta')">LISTADO</div>
-    </div>
+        <div class="tabs">
+            <div class="tab-btn active" onclick="openTab('registro')">📝 REGISTRO</div>
+            <div class="tab-btn" onclick="openTab('consulta')">📊 LISTADO COMPLETO</div>
+        </div>
 
-    <div id="registro" class="tab-content active">
-        <form id="formInventario">
-            <label>Equipo</label>
-            <input type="text" name="pc_nombre" placeholder="Nombre de PC" required>
-            
-            <label>Serie</label>
-            <input type="text" name="serie" placeholder="Número de Serie" required>
-            
-            <label>Ubicación</label>
-            <select name="piso" required>
-                <option value="" disabled selected>Seleccione Piso</option>
-                <option value="Piso 1">Piso 1</option>
-                <option value="Piso 2">Piso 2</option>
-                <option value="Piso 3">Piso 3</option>
-                <option value="Piso 3">Piso 4</option>
-                <option value="Piso 3">Piso 5</option>
-            </select>
-            
-            <label>Área / Usuario</label>
-            <input type="text" name="area" placeholder="Área" required>
-            <input type="text" name="usuario" placeholder="Usuario Responsable" required>
-            
-            <label>Notas</label>
-            <textarea name="notes" rows="3" placeholder="Notas..."></textarea>
-            
-            <button type="submit" id="btnEnviar">GUARDAR EN SHEETS</button>
-        </form>
-    </div>
+        <div id="registro" class="tab-content active">
+            <form id="formInventario">
+                <label>Nombre de Equipo</label>
+                <input type="text" name="pc_nombre" placeholder="Ej: PC-VENTAS-01" required>
+                
+                <label>Número de Serie</label>
+                <input type="text" name="serie" placeholder="S/N: XXXXXXXX" required>
+                
+                <label>Ubicación</label>
+                <select name="piso" required>
+                    <option value="" disabled selected>Seleccione el piso...</option>
+                    <option value="Piso 1">Piso 1</option>
+                    <option value="Piso 2">Piso 2</option>
+                    <option value="Piso 3">Piso 3</option>
+                </select>
+                
+                <label>Área</label>
+                <input type="text" name="area" placeholder="Ej: Recursos Humanos" required>
+                
+                <label>Usuario Responsable</label>
+                <input type="text" name="usuario" placeholder="Nombre del trabajador" required>
+                
+                <label>Notas Técnicas</label>
+                <textarea name="notas" rows="3" placeholder="RAM, Procesador, estado..."></textarea>
+                
+                <button type="submit" id="btnEnviar" style="background: var(--azul-institucional); color: white; cursor: pointer;">💾 GUARDAR REGISTRO</button>
+            </form>
+        </div>
 
-    <div id="consulta" class="tab-content">
-        <button onclick="cargarDatos()" style="background: #2ecc71; color: white; width: auto !important; padding: 10px 20px;">ACTUALIZAR DATOS</button>
-        
-        <div id="loader" class="loading" style="display:none;">⏳ Accediendo a la base de datos...</div>
-        
-        <div class="tabla-container">
-            <table id="tablaInventario" class="display nowrap cell-border">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre PC</th>
-                        <th>Serie</th>
-                        <th>Piso</th>
-                        <th>Área</th>
-                        <th>Usuario</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpoTabla"></tbody>
-            </table>
+        <div id="consulta" class="tab-content">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button onclick="cargarDatos()" style="background: #2ecc71; color: white; border: none; width: auto; padding: 10px 20px; cursor: pointer;">🔄 ACTUALIZAR TABLA</button>
+            </div>
+            
+            <div id="loader" class="loading" style="display:none;">⏳ Sincronizando con Google Sheets...</div>
+            
+            <div class="tabla-container">
+                <table id="tablaInventario" class="display nowrap">
+                    <thead>
+                        <tr>
+                            <th>ID ACTIVO</th>
+                            <th>NOMBRE PC</th>
+                            <th>SERIE</th>
+                            <th>PISO</th>
+                            <th>ÁREA</th>
+                            <th>USUARIO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -194,7 +204,7 @@
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
             btn.disabled = true;
-            btn.innerText = "ENVIANDO...";
+            btn.innerText = "ENVIANDO DATOS...";
 
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
@@ -204,12 +214,13 @@
                 mode: 'no-cors',
                 body: JSON.stringify(data)
             }).then(() => {
-                alert("✅ Guardado correctamente en la nube");
+                alert("✅ Éxito: El equipo ha sido registrado.");
                 this.reset();
                 btn.disabled = false;
-                btn.innerText = "GUARDAR EN SHEETS";
-            }).catch(() => {
-                alert("❌ Error de conexión");
+                btn.innerText = "💾 GUARDAR REGISTRO";
+            }).catch(err => {
+                console.error(err);
+                alert("❌ Error al guardar.");
                 btn.disabled = false;
             });
         });
@@ -225,7 +236,7 @@
                 
                 const html = data.map(reg => `
                     <tr>
-                        <td><b>${reg.id_activo || '-'}</b></td>
+                        <td><span style="color: #4a86e8; font-weight: bold;">${reg.id_activo || '-'}</span></td>
                         <td>${reg.nombre_de_pc || '-'}</td>
                         <td>${reg.serie || '-'}</td>
                         <td>${reg.piso || '-'}</td>
@@ -239,15 +250,13 @@
                 dataTable = $('#tablaInventario').DataTable({
                     scrollX: true,
                     language: { 
-                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
-                        searchPlaceholder: "Buscar activo..."
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                     },
                     pageLength: 10,
-                    dom: 'ftp' // Filtro, Tabla, Paginación
+                    dom: 'ftp'
                 });
             } catch (error) {
                 console.error(error);
-                alert("Error al obtener los datos");
             } finally {
                 $('#loader').hide();
             }
