@@ -117,7 +117,7 @@
             margin-top: 10px;
         }
 
-        /* TABLA Y CONTENEDOR */
+  /* TABLA Y CONTENEDOR */
 .header-tabla {
     display: flex;
     justify-content: space-between;
@@ -129,7 +129,7 @@
 
 .tabla-container {
     width: 100%;
-    overflow-x: auto; /* ✅ SCROLL LATERAL */
+    overflow-x: auto;
     background: var(--fondo-paneles);
     border-radius: 10px;
     padding: 15px;
@@ -137,29 +137,31 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-table.dataTable { 
-    width: 100% !important; 
-    margin: 0 !important; 
+/* 🔥 TABLA BASE */
+table.dataTable {
+    width: 100% !important;
+    margin: 0 !important;
+    table-layout: auto !important; /* 🔥 clave */
 }
 
-/* 🔥 HEADER MEJORADO */
-table.dataTable thead th { 
-    background-color: var(--azul-institucional) !important; 
+/* 🔥 ENCABEZADOS */
+table.dataTable thead th {
+    background-color: var(--azul-institucional) !important;
     padding: 14px 18px !important;
-    border-bottom: none !important; 
-    color: white !important; 
-    
-    white-space: nowrap;          /* 🔥 todo en una sola línea */
-    min-width: 150px;             /* 🔥 fuerza espacio */
+    color: white !important;
+
+    white-space: nowrap;  /* 👈 NO dividir texto */
+    min-width: 140px;     /* 👈 ancho mínimo real */
     text-align: left;
 }
 
 /* 🔥 CELDAS */
-table.dataTable tbody td { 
+table.dataTable tbody td {
     padding: 14px 18px !important;
-    border-bottom: 1px solid #3e4b5b !important; 
-    white-space: nowrap; /* 👈 datos en una sola línea */
-    min-width: 130px;
+    border-bottom: 1px solid #3e4b5b !important;
+
+    white-space: nowrap;
+    min-width: 140px;
 }
 
 /* FILAS */
@@ -171,23 +173,12 @@ table.dataTable tbody tr:hover {
     background-color: #374151;
 }
 
-/* 🔥 AJUSTE CLAVE PARA CELULAR */
+/* 🔥 MOBILE */
 @media (max-width: 600px) {
-
-    table.dataTable thead th {
-        font-size: 0.85rem;
-        padding: 12px 14px !important;
-    }
-
-    table.dataTable tbody td {
-        font-size: 0.85rem;
-        padding: 12px 14px !important;
-    }
-
-    /* 👇 fuerza mejor separación horizontal */
     table.dataTable thead th,
     table.dataTable tbody td {
-        min-width: 120px;
+        font-size: 0.85rem;
+        min-width: 130px; /* 👈 fuerza scroll */
     }
 }
     </style>
