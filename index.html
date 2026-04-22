@@ -149,11 +149,8 @@ table.dataTable thead th {
     border-bottom: none !important; 
     color: white !important; 
     
-    white-space: normal !important;  /* permite salto */
-    word-break: keep-all;            /* ❌ evita corte letra por letra */
-    overflow-wrap: break-word;       /* solo rompe si es necesario */
-    
-    min-width: 140px;                /* 🔥 clave para que no se aplaste */
+    white-space: nowrap;          /* 🔥 todo en una sola línea */
+    min-width: 150px;             /* 🔥 fuerza espacio */
     text-align: left;
 }
 
