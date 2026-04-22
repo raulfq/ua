@@ -145,12 +145,16 @@ table.dataTable {
 /* 🔥 HEADER MEJORADO */
 table.dataTable thead th { 
     background-color: var(--azul-institucional) !important; 
-    padding: 14px 18px !important; /* 👈 menos exagerado */
+    padding: 14px 18px !important;
     border-bottom: none !important; 
     color: white !important; 
-    white-space: normal !important; /* ✅ permite 2 líneas */
-    line-height: 1.2;
-    min-width: 130px; /* 👈 da espacio entre columnas */
+    
+    white-space: normal !important;  /* permite salto */
+    word-break: keep-all;            /* ❌ evita corte letra por letra */
+    overflow-wrap: break-word;       /* solo rompe si es necesario */
+    
+    min-width: 140px;                /* 🔥 clave para que no se aplaste */
+    text-align: left;
 }
 
 /* 🔥 CELDAS */
