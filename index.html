@@ -246,31 +246,35 @@ table.dataTable tbody tr:hover {
             </form>
         </div>
 
-        <div id="consulta" class="tab-content">
-            <div class="header-tabla">
-                <h3 style="margin: 0; color: white;">Equipos Registrados</h3>
-                <button onclick="cargarDatos()" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold;">🔄 ACTUALIZAR</button>
-            </div>
-            
-            <div id="loader" class="loading" style="display:none;">⏳ Sincronizando datos...</div>
-            
-            <div class="tabla-container">
-                <table id="tablaInventario" class="display nowrap">
-                    <thead>
-                        <tr>
-                            <th>ID ACTIVO</th>
-                            <th>NOMBRE PC</th>
-                            <th>SERIE</th>
-                            <th>PISO</th>
-                            <th>ÁREA</th>
-                            <th>USUARIO</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTabla"></tbody>
-                </table>
-            </div>
-        </div>
+     <div id="consulta" class="tab-content">
+    <div class="header-tabla">
+        <h3 style="margin: 0; color: white;">Equipos Registrados</h3>
+        <button onclick="cargarDatos()" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold;">
+            🔄 ACTUALIZAR
+        </button>
     </div>
+    
+    <div id="loader" class="loading" style="display:none;">
+        ⏳ Sincronizando datos...
+    </div>
+    
+    <div class="tabla-container">
+        <!-- 🔥 SIN nowrap -->
+        <table id="tablaInventario" class="display">
+            <thead>
+                <tr>
+                    <th>ID ACTIVO</th>
+                    <th>NOMBRE PC</th>
+                    <th>SERIE</th>
+                    <th>PISO</th>
+                    <th>ÁREA</th>
+                    <th>USUARIO</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla"></tbody>
+        </table>
+    </div>
+</div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
