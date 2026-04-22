@@ -118,63 +118,77 @@
         }
 
         /* TABLA Y CONTENEDOR */
-        .header-tabla {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap; /* Si no cabe en móvil, baja de línea */
-            gap: 10px;
-        }
+.header-tabla {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-        .tabla-container {
-            width: 100%;
-            overflow-x: auto; /* SCROLL LATERAL */
-            background: var(--fondo-paneles);
-            border-radius: 10px;
-            padding: 15px;
-            box-sizing: border-box;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+.tabla-container {
+    width: 100%;
+    overflow-x: auto; /* ✅ SCROLL LATERAL */
+    background: var(--fondo-paneles);
+    border-radius: 10px;
+    padding: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
 
-      table.dataTable { 
+table.dataTable { 
     width: 100% !important; 
     margin: 0 !important; 
 }
 
-/* ENCABEZADO MÁS ESPACIADO */
+/* 🔥 HEADER MEJORADO */
 table.dataTable thead th { 
     background-color: var(--azul-institucional) !important; 
-    padding: 18px 30px !important; /* 🔥 MÁS ESPACIO */
+    padding: 14px 18px !important; /* 👈 menos exagerado */
     border-bottom: none !important; 
     color: white !important; 
-    white-space: nowrap; /* evita que se rompa el texto */
+    white-space: normal !important; /* ✅ permite 2 líneas */
+    line-height: 1.2;
+    min-width: 130px; /* 👈 da espacio entre columnas */
 }
 
-/* CELDAS MÁS CÓMODAS */
+/* 🔥 CELDAS */
 table.dataTable tbody td { 
-    padding: 18px 30px !important; /* 🔥 MÁS ESPACIO */
+    padding: 14px 18px !important;
     border-bottom: 1px solid #3e4b5b !important; 
-    white-space: nowrap; /* mantiene todo alineado */
+    white-space: nowrap; /* 👈 datos en una sola línea */
+    min-width: 130px;
 }
 
-/* SEPARACIÓN ENTRE FILAS (look más pro) */
+/* FILAS */
 table.dataTable tbody tr {
     border-bottom: 1px solid #4a5568;
 }
 
-/* EFECTO HOVER (opcional pero mejora UX) */
 table.dataTable tbody tr:hover {
     background-color: #374151;
 }
-        /* AJUSTES EXTRA PARA MÓVILES PEQUEÑOS */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            #formInventario { padding: 15px; }
-            .tab-btn { padding: 12px 5px; font-size: 0.9rem; }
-            .header-tabla { justify-content: center; }
-            .header-tabla button { width: 100%; }
-        }
+
+/* 🔥 AJUSTE CLAVE PARA CELULAR */
+@media (max-width: 600px) {
+
+    table.dataTable thead th {
+        font-size: 0.85rem;
+        padding: 12px 14px !important;
+    }
+
+    table.dataTable tbody td {
+        font-size: 0.85rem;
+        padding: 12px 14px !important;
+    }
+
+    /* 👇 fuerza mejor separación horizontal */
+    table.dataTable thead th,
+    table.dataTable tbody td {
+        min-width: 120px;
+    }
+}
     </style>
 </head>
 <body>
@@ -207,6 +221,8 @@ table.dataTable tbody tr:hover {
                             <option value="Piso 1">Piso 1</option>
                             <option value="Piso 2">Piso 2</option>
                             <option value="Piso 3">Piso 3</option>
+                            <option value="Piso 3">Piso 4</option>
+                            <option value="Piso 3">Piso 5</option>
                         </select>
                     </div>
                     
