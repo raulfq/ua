@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Inventario TI - Tabla Espaciada</title>
+    <title>Inventario TI - Tabla Responsive</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
     
@@ -31,6 +31,7 @@
 
         h1 { text-align: center; color: var(--azul-institucional); margin-bottom: 25px; }
 
+        /* Pestañas */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .tab-btn { 
             flex: 1; max-width: 300px; text-align: center; cursor: pointer; 
@@ -42,6 +43,7 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Formulario */
         #formInventario {
             max-width: 800px; margin: 0 auto; background: var(--fondo-paneles);
             padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -65,6 +67,7 @@
             width: 100%; border-radius: 8px; margin-top: 10px;
         }
 
+        /* --- MEJORAS EN LA TABLA RESPONSIVE --- */
         .header-tabla {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
@@ -75,22 +78,31 @@
             padding: 20px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* --- AJUSTES DE ESPACIADO DE COLUMNAS --- */
         table.dataTable { width: 100% !important; border-collapse: collapse !important; }
         
+        /* Más espacio en las celdas para que no esté pegado */
         table.dataTable thead th { 
             background-color: var(--azul-institucional) !important; 
-            padding: 16px 30px !important; /* Aumentado a 30px laterales */
+            padding: 16px 12px !important; /* Más altura */
             color: white !important; 
             border-bottom: 2px solid #202b38 !important;
-            white-space: nowrap;
         }
         
         table.dataTable tbody td { 
-            padding: 16px 30px !important; /* Aumentado a 30px laterales */
+            padding: 16px 12px !important; /* Más espacio interior */
             border-bottom: 1px solid #3e4b5b !important; 
             vertical-align: middle;
-            white-space: nowrap; /* Evita que el texto se amontone, forzando el scroll lateral */
+        }
+
+        /* Estilo del botón desplegable en móviles (+) */
+        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before, 
+        table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
+            background-color: var(--azul-institucional) !important;
+            box-shadow: none !important;
+            border: 2px solid white !important;
+            height: 18px !important;
+            width: 18px !important;
+            line-height: 18px !important;
         }
 
         .dataTables_filter input { width: 250px !important; margin-left: 10px !important; }
@@ -99,6 +111,8 @@
         @media (max-width: 600px) {
             body { padding: 10px; }
             .tabla-container { padding: 10px; }
+            .dataTables_filter input { width: 100% !important; margin-left: 0 !important; margin-top: 10px !important;}
+            .header-tabla { justify-content: center; }
             .header-tabla button { width: 100%; padding: 15px; }
         }
     </style>
@@ -131,8 +145,6 @@
                             <option value="Piso 1">Piso 1</option>
                             <option value="Piso 2">Piso 2</option>
                             <option value="Piso 3">Piso 3</option>
-                            <option value="Piso 4">Piso 4</option>
-                            <option value="Piso 5">Piso 5</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -198,6 +210,7 @@
             const btn = document.getElementById('btnEnviar');
             btn.disabled = true;
             btn.innerText = "ENVIANDO DATOS...";
+
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
 
@@ -223,6 +236,7 @@
             try {
                 const response = await fetch(`${URL_APP_SCRIPT}?read=true`);
                 const data = await response.json();
+                
                 if (dataTable) dataTable.destroy();
                 
                 const html = data.map(reg => `
@@ -238,9 +252,9 @@
                 
                 document.getElementById('cuerpoTabla').innerHTML = html;
                 
+                // INICIALIZACIÓN RESPONSIVE
                 dataTable = $('#tablaInventario').DataTable({
-                    responsive: false, // Desactivado para priorizar el scroll lateral espaciado
-                    scrollX: true,      // Habilita el scroll horizontal
+                    responsive: true, // <-- Esto activa la magia móvil
                     language: { 
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
                         search: "Buscar:"
