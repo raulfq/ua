@@ -137,19 +137,36 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        table.dataTable { width: 100% !important; margin: 0 !important; }
-        table.dataTable tbody td {
-    padding: 16px 25px !important; /* más espacio vertical y horizontal */
+      table.dataTable { 
+    width: 100% !important; 
+    margin: 0 !important; 
 }
 
-table.dataTable thead th {
-    padding: 16px 25px !important; /* igual para encabezados */
+/* ENCABEZADO MÁS ESPACIADO */
+table.dataTable thead th { 
+    background-color: var(--azul-institucional) !important; 
+    padding: 18px 30px !important; /* 🔥 MÁS ESPACIO */
+    border-bottom: none !important; 
+    color: white !important; 
+    white-space: nowrap; /* evita que se rompa el texto */
 }
-        
-        .dataTables_filter input { width: 200px !important; margin-left: 10px !important; }
 
-        .loading { text-align: center; padding: 20px; color: var(--azul-institucional); font-weight: bold; }
+/* CELDAS MÁS CÓMODAS */
+table.dataTable tbody td { 
+    padding: 18px 30px !important; /* 🔥 MÁS ESPACIO */
+    border-bottom: 1px solid #3e4b5b !important; 
+    white-space: nowrap; /* mantiene todo alineado */
+}
 
+/* SEPARACIÓN ENTRE FILAS (look más pro) */
+table.dataTable tbody tr {
+    border-bottom: 1px solid #4a5568;
+}
+
+/* EFECTO HOVER (opcional pero mejora UX) */
+table.dataTable tbody tr:hover {
+    background-color: #374151;
+}
         /* AJUSTES EXTRA PARA MÓVILES PEQUEÑOS */
         @media (max-width: 600px) {
             body { padding: 10px; }
