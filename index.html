@@ -1,62 +1,41 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <style>
-      body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-      form { max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-      label { display: block; margin-top: 10px; font-weight: bold; color: #333; }
-      input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-      button { margin-top: 20px; width: 100%; padding: 10px; background-color: #4a86e8; color: white; border: none; border-radius: 4px; cursor: pointer; }
-      button:hover { background-color: #357abd; }
-      #mensaje { margin-top: 15px; color: green; font-weight: bold; text-align: center; }
-    </style>
-  </head>
-  <body>
-    <h2>Registro de Inventario TI</h2>
-    <form id="miFormulario">
-      <label>Nombre de PC:</label>
-      <input type="text" name="pc_nombre" required>
-      
-      <label>Serie:</label>
-      <input type="text" name="serie" required>
-      
-      <label>Piso:</label>
-      <select name="piso">
-        <option value="Piso 1">Piso 1</option>
-        <option value="Piso 2">Piso 2</option>
-        <option value="Piso 3">Piso 3</option>
-      </select>
-      
-      <label>Área:</label>
-      <input type="text" name="area" required>
-      
-      <label>Usuario:</label>
-      <input type="text" name="usuario" required>
-      
-      <label>Notas:</label>
-      <textarea name="notas" rows="3"></textarea>
-      
-      <button type="button" onclick="enviarDatos(this)">Registrar Activo</button>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario TI - Web</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"> </head>
+<body>
+    <h1>Registro de Activos TI</h1>
+    <form id="formInventario">
+        <input type="text" name="pc_nombre" placeholder="Nombre de PC" required>
+        <input type="text" name="serie" placeholder="Número de Serie" required>
+        <select name="piso">
+            <option value="1">Piso 1</option>
+            <option value="2">Piso 2</option>
+        </select>
+        <input type="text" name="area" placeholder="Área" required>
+        <input type="text" name="usuario" placeholder="Usuario Responsable" required>
+        <textarea name="notas" placeholder="Notas adicionales"></textarea>
+        <button type="submit">Enviar a Inventario</button>
     </form>
-    
-    <div id="mensaje"></div>
 
     <script>
-      function enviarDatos(boton) {
-        boton.disabled = true;
-        boton.innerText = "Enviando...";
-        var form = document.getElementById('miFormulario');
-        
-        google.script.run
-          .withSuccessHandler(function(res) {
-            document.getElementById('mensaje').innerHTML = res;
-            form.reset();
-            boton.disabled = false;
-            boton.innerText = "Registrar Activo";
-          })
-          .procesarFormulario(form);
-      }
+        const URL_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbzytWxR87UCFm2VpDUP5GhvqK4jj-4EXs_Hei6r--NTmy3ylmY1XSsrq6_7KgqJRy7-/exec";
+
+        document.getElementById('formInventario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            fetch(URL_APP_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors', // Importante para evitar errores de seguridad simples
+                body: JSON.stringify(data)
+            }).then(() => {
+                alert("¡Datos enviados con éxito!");
+                this.reset();
+            }).catch(err => console.error("Error:", err));
+        });
     </script>
-  </body>
+</body>
 </html>
