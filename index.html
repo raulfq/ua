@@ -1,134 +1,140 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Inventario TI Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario TI - Mobile Ready</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
     
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
     <style>
-        body { 
-            max-width: 100%; 
-            padding: 10px; 
-            margin: 0;
-            font-size: 16px; /* Evita zoom automático en iPhone al enfocar inputs */
+        :root {
+            --azul-institucional: #4a86e8;
         }
 
-        h1 { font-size: 1.5rem; text-align: center; color: #4a86e8; }
+        body { 
+            max-width: 100%; 
+            padding: 15px; 
+            margin: 0;
+        }
 
-        /* Pestañas estilo botones móviles */
+        h1 { text-align: center; color: var(--azul-institucional); }
+
+        /* Pestañas con el azul anterior */
         .tabs { 
             display: flex; 
             gap: 5px; 
-            margin-bottom: 20px; 
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 100;
-            padding: 10px 0;
+            margin-bottom: 20px;
         }
 
         .tab-btn { 
             flex: 1;
             text-align: center;
             cursor: pointer; 
-            padding: 12px 5px; 
-            border-radius: 8px; 
+            padding: 12px; 
+            border-radius: 5px; 
             border: 1px solid #ccc; 
-            background: #f8f9fa; 
+            background: #f0f0f0; 
             font-weight: bold;
-            font-size: 0.9rem;
         }
 
         .tab-btn.active { 
-            background: #4a86e8; 
+            background: var(--azul-institucional); 
             color: white; 
-            border-color: #4a86e8; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-color: var(--azul-institucional); 
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Formulario adaptativo */
-        .grid-form { 
-            display: flex;
-            flex-direction: column;
-            gap: 10px; 
-        }
-
+        /* Formulario */
         input, select, textarea, button {
             width: 100% !important;
-            margin: 5px 0 !important;
-            padding: 12px !important;
+            margin: 8px 0 !important;
             box-sizing: border-box;
         }
 
-        button { font-weight: bold; }
-
-        /* Ajustes de Tabla para celular */
-        .dtr-details { width: 100%; }
-        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
-            background-color: #4a86e8 !important;
+        #btnEnviar {
+            background-color: var(--azul-institucional);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
         }
-        
-        .loading { text-align: center; padding: 20px; font-weight: bold; color: #4a86e8; }
+
+        /* CONTENEDOR PARA SCROLL LATERAL */
+        .tabla-container {
+            width: 100%;
+            overflow-x: auto; /* Esto permite el scroll de lado */
+            margin-top: 15px;
+            border: 1px solid #eee;
+        }
+
+        table {
+            width: 100% !important;
+            white-space: nowrap; /* Evita que el texto se amontone en varias líneas */
+        }
+
+        th {
+            background-color: var(--azul-institucional) !important;
+            color: white !important;
+        }
+
+        .loading { text-align: center; padding: 20px; color: var(--azul-institucional); }
     </style>
 </head>
 <body>
 
-    <h1>Inventario TI</h1>
+    <h1>Gestión de Inventario</h1>
 
     <div class="tabs">
-        <div class="tab-btn active" onclick="openTab('registro')">📝 Registro</div>
-        <div class="tab-btn" onclick="openTab('consulta')">🔍 Consulta</div>
+        <div class="tab-btn active" onclick="openTab('registro')">REGISTRO</div>
+        <div class="tab-btn" onclick="openTab('consulta')">LISTADO</div>
     </div>
 
     <div id="registro" class="tab-content active">
         <form id="formInventario">
-            <div class="grid-form">
-                <input type="text" name="pc_nombre" placeholder="Nombre de PC" required>
-                <input type="text" name="serie" placeholder="Número de Serie" required>
-                <select name="piso" required>
-                    <option value="" disabled selected>Seleccione Piso</option>
-                    <option value="Piso 1">Piso 1</option>
-                    <option value="Piso 2">Piso 2</option>
-                    <option value="Piso 3">Piso 3</option>
-                </select>
-                <input type="text" name="area" placeholder="Área" required>
-                <input type="text" name="usuario" placeholder="Usuario Responsable" required>
-                <textarea name="notas" rows="3" placeholder="Notas adicionales..."></textarea>
-                <button type="submit" id="btnEnviar" style="background: #4a86e8; color: white; border: none;">💾 GUARDAR REGISTRO</button>
-            </div>
+            <input type="text" name="pc_nombre" placeholder="Nombre de PC" required>
+            <input type="text" name="serie" placeholder="Número de Serie" required>
+            <select name="piso" required>
+                <option value="" disabled selected>Seleccione Piso</option>
+                <option value="Piso 1">Piso 1</option>
+                <option value="Piso 2">Piso 2</option>
+                <option value="Piso 3">Piso 3</option>
+            </select>
+            <input type="text" name="area" placeholder="Área" required>
+            <input type="text" name="usuario" placeholder="Usuario Responsable" required>
+            <textarea name="notas" rows="3" placeholder="Notas..."></textarea>
+            <button type="submit" id="btnEnviar">GUARDAR EN SHEETS</button>
         </form>
     </div>
 
     <div id="consulta" class="tab-content">
-        <button onclick="cargarDatos()" style="background: #2ecc71; color: white; border: none; margin-bottom: 15px;">🔄 Refrescar Lista</button>
-        <div id="loader" class="loading" style="display:none;">⏳ Cargando inventario...</div>
+        <button onclick="cargarDatos()" style="background: #2ecc71; color: white;">ACTUALIZAR</button>
+        <div id="loader" class="loading" style="display:none;">Cargando...</div>
         
-        <table id="tablaInventario" class="display responsive nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre PC</th>
-                    <th>Serie</th>
-                    <th>Piso</th>
-                    <th>Área</th>
-                    <th>Usuario</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpoTabla"></tbody>
-        </table>
+        <div class="tabla-container">
+            <table id="tablaInventario" class="display compact">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre PC</th>
+                        <th>Serie</th>
+                        <th>Piso</th>
+                        <th>Área</th>
+                        <th>Usuario</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla"></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     <script>
         const URL_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbzytWxR87UCFm2VpDUP5GhvqK4jj-4EXs_Hei6r--NTmy3ylmY1XSsrq6_7KgqJRy7-/exec"; 
@@ -155,12 +161,12 @@
                 mode: 'no-cors',
                 body: JSON.stringify(data)
             }).then(() => {
-                alert("✅ Registrado con éxito");
+                alert("Guardado correctamente");
                 this.reset();
                 btn.disabled = false;
-                btn.innerText = "💾 GUARDAR REGISTRO";
-            }).catch(err => {
-                alert("❌ Error al conectar");
+                btn.innerText = "GUARDAR EN SHEETS";
+            }).catch(() => {
+                alert("Error de conexión");
                 btn.disabled = false;
             });
         });
@@ -188,14 +194,13 @@
                 document.getElementById('cuerpoTabla').innerHTML = html;
                 
                 dataTable = $('#tablaInventario').DataTable({
-                    responsive: true,
+                    scrollX: true, // Habilita el scroll interno de la librería
                     language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
-                    pageLength: 5,
-                    dom: 'ftp' // Simplificado para móvil: Filtro, Tabla, Paginación
+                    pageLength: 10,
+                    dom: 'tp' 
                 });
             } catch (error) {
                 console.error(error);
-                alert("Error al cargar datos");
             } finally {
                 $('#loader').hide();
             }
