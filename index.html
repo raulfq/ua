@@ -338,14 +338,17 @@ table.dataTable tbody tr:hover {
                 
                 document.getElementById('cuerpoTabla').innerHTML = html;
                 
-                dataTable = $('#tablaInventario').DataTable({
-                    scrollX: true, /* SCROLL LATERAL MANTENIDO */
-                    language: { 
-                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                    },
-                    pageLength: 10,
-                    dom: 'ftp'
-                });
+             dataTable = $('#tablaInventario').DataTable({
+    scrollX: true,
+    autoWidth: false,   // 🔥 IMPORTANTE
+    responsive: false,  // 🔥 MUY IMPORTANTE
+
+    language: { 
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+    },
+    pageLength: 10,
+    dom: 'ftp'
+});
             } catch (error) {
                 console.error(error);
             } finally {
