@@ -304,6 +304,14 @@
             <input type="text" id="filtroEquipo" placeholder="🖥️ Buscar por equipo" style="flex:1; min-width:150px;">
             <input type="text" id="filtroSerie" placeholder="🔍 Buscar por serie" style="flex:1; min-width:150px;">
             <input type="text" id="filtroUsuario" placeholder="👤 Buscar por usuario" style="flex:1; min-width:150px;">
+            <select id="filtroPiso" style="flex:1; min-width:150px;">
+    <option value="">🏢 Todos los pisos</option>
+    <option value="Piso 1">Piso 1</option>
+    <option value="Piso 2">Piso 2</option>
+    <option value="Piso 3">Piso 3</option>
+    <option value="Piso 4">Piso 4</option>
+    <option value="Piso 5">Piso 5</option>
+</select>
             <select id="filtroEstado" style="flex:1; min-width:120px;">
                 <option value="">Todos los estados</option>
                 <option value="ACTIVO">ACTIVO</option>
@@ -494,21 +502,28 @@
         }
     }
 
-    /* Vincular filtros al DataTable activo (se llama cada vez que se reconstruye) */
-    function vincularFiltros() {
-        $('#filtroEquipo').off('keyup').on('keyup', function() {
-            dataTable.column(1).search(this.value).draw();
-        });
-        $('#filtroSerie').off('keyup').on('keyup', function() {
-            dataTable.column(2).search(this.value).draw();
-        });
-        $('#filtroUsuario').off('keyup').on('keyup', function() {
-            dataTable.column(5).search(this.value).draw();
-        });
-        $('#filtroEstado').off('change').on('change', function() {
-            dataTable.column(6).search(this.value).draw();
-        });
-    }
+/* Vincular filtros al DataTable activo (se llama cada vez que se reconstruye) */
+function vincularFiltros() {
+    $('#filtroEquipo').off('keyup').on('keyup', function() {
+        dataTable.column(1).search(this.value).draw();
+    });
+    $('#filtroSerie').off('keyup').on('keyup', function() {
+        dataTable.column(2).search(this.value).draw();
+    });
+    
+    // --- FILTRO POR PISO (SELECT) ---
+    // Usamos el índice 3 porque es la cuarta columna
+    $('#filtroPiso').off('change').on('change', function() {
+        dataTable.column(3).search(this.value).draw(); 
+    });
+
+    $('#filtroUsuario').off('keyup').on('keyup', function() {
+        dataTable.column(5).search(this.value).draw();
+    });
+    $('#filtroEstado').off('change').on('change', function() {
+        dataTable.column(6).search(this.value).draw();
+    });
+}
 
     /* ══════════════════════════════════════
        EDITAR
