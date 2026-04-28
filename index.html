@@ -318,7 +318,13 @@
                 <option value="INACTIVO">INACTIVO</option>
             </select>
         </div>
-
+        <div id="contadorVistas" style="margin-bottom: 15px; padding: 10px; background: rgba(74, 134, 232, 0.1); border-left: 4px solid var(--azul-institucional); border-radius: 4px;">
+    <span style="color: #a0aec0;">Resultados:</span> 
+    <span id="totalFiltrados" style="color: white; font-weight: bold; font-size: 1.1rem;">0</span> 
+    <span style="color: #a0aec0;">de</span> 
+    <span id="totalRegistros" style="color: white; font-weight: bold;">0</span> 
+    <span style="color: #a0aec0;">equipos sincronizados.</span>
+</div>
         <div class="tabla-container table-responsive">
             <table id="tablaInventario" class="table table-dark table-striped table-bordered">
                 <thead>
@@ -502,29 +508,49 @@
         }
     }
 
-/* Vincular filtros al DataTable activo (se llama cada vez que se reconstruye) */
-function vincularFiltros() {
-    $('#filtroEquipo').off('keyup').on('keyup', function() {
-        dataTable.column(1).search(this.value).draw();
-    });
-    $('#filtroSerie').off('keyup').on('keyup', function() {
-        dataTable.column(2).search(this.value).draw();
-    });
+/* Función para actualizar las cifras del contador */
+function actualizarContador() {
+    if (!dataTable) return;
     
-    // --- FILTRO POR PISO (SELECT) ---
-    // Usamos el índice 3 porque es la cuarta columna
-    $('#filtroPiso').off('change').on('change', function() {
-        dataTable.column(3).search(this.value).draw(); 
-    });
-
-    $('#filtroUsuario').off('keyup').on('keyup', function() {
-        dataTable.column(5).search(this.value).draw();
-    });
-    $('#filtroEstado').off('change').on('change', function() {
-        dataTable.column(6).search(this.value).draw();
-    });
+    // Rows({ filter: 'applied' }) nos da solo los registros que pasan los filtros actuales
+    const filtrados = dataTable.rows({ filter: 'applied' }).count();
+    const totales = dataTable.rows().count();
+    
+    document.getElementById('totalFiltrados').innerText = filtrados;
+    document.getElementById('totalRegistros').innerText = totales;
 }
 
+/* Vincular filtros con actualización de contador en tiempo real */
+function vincularFiltros() {
+    
+    // Actualizamos el contador apenas se carga la tabla
+    actualizarContador();
+
+    // Filtros de texto (Equipo, Serie, Usuario)
+    $('#filtroEquipo, #filtroSerie, #filtroUsuario').off('keyup').on('keyup', function() {
+        const id = $(this).attr('id');
+        let colIndex = 1; // Por defecto Equipo
+        if (id === 'filtroSerie') colIndex = 2;
+        if (id === 'filtroUsuario') colIndex = 5;
+
+        dataTable.column(colIndex).search(this.value).draw();
+        actualizarContador(); // <-- Actualiza el número al escribir
+    });
+
+    // Filtro PISO (Select)
+    $('#filtroPiso').off('change').on('change', function() {
+        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        dataTable.column(3).search(val ? '^' + val + '$' : '', true, false).draw();
+        actualizarContador(); // <-- Actualiza el número al seleccionar
+    });
+
+    // Filtro ESTADO (Select)
+    $('#filtroEstado').off('change').on('change', function() {
+        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        dataTable.column(6).search(val ? '^' + val + '$' : '', true, false).draw();
+        actualizarContador(); // <-- Actualiza el número al seleccionar
+    });
+}
     /* ══════════════════════════════════════
        EDITAR
     ══════════════════════════════════════ */
