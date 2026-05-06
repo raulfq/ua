@@ -303,7 +303,9 @@
         <div style="margin-bottom:10px; display:flex; gap:8px; flex-wrap:wrap;">
             <input type="text" id="filtroEquipo" placeholder="🖥️ Buscar por equipo" style="flex:1; min-width:150px;">
             <input type="text" id="filtroSerie" placeholder="🔍 Buscar por serie" style="flex:1; min-width:150px;">
+
             <input type="text" id="filtroUsuario" placeholder="👤 Buscar por usuario" style="flex:1; min-width:150px;">
+            <input type="text" id="filtroArea" placeholder="🏢 Buscar por área" style="flex:1; min-width:150px;">
             <select id="filtroPiso" style="flex:1; min-width:150px;">
     <option value="">🏢 Todos los pisos</option>
     <option value="Piso 1">Piso 1</option>
@@ -521,34 +523,41 @@ function actualizarContador() {
 }
 
 /* Vincular filtros con actualización de contador en tiempo real */
+/* Vincular filtros con actualización de contador en tiempo real */
 function vincularFiltros() {
     
     // Actualizamos el contador apenas se carga la tabla
     actualizarContador();
 
-    // Filtros de texto (Equipo, Serie, Usuario)
-    $('#filtroEquipo, #filtroSerie, #filtroUsuario').off('keyup').on('keyup', function() {
+    // Filtros de texto (Equipo, Serie, Usuario, ÁREA)
+    $('#filtroEquipo, #filtroSerie, #filtroUsuario, #filtroArea').off('keyup').on('keyup', function() {
         const id = $(this).attr('id');
-        let colIndex = 1; // Por defecto Equipo
-        if (id === 'filtroSerie') colIndex = 2;
-        if (id === 'filtroUsuario') colIndex = 5;
+        let colIndex;
+
+        // Asignación de índices según el HTML de tu tabla
+        switch(id) {
+            case 'filtroEquipo': colIndex = 1; break;
+            case 'filtroSerie':  colIndex = 2; break;
+            case 'filtroArea':   colIndex = 4; break; // Columna ÁREA
+            case 'filtroUsuario': colIndex = 5; break;
+        }
 
         dataTable.column(colIndex).search(this.value).draw();
-        actualizarContador(); // <-- Actualiza el número al escribir
+        actualizarContador(); 
     });
 
-    // Filtro PISO (Select)
+    // Filtro PISO (Select - Columna 3)
     $('#filtroPiso').off('change').on('change', function() {
         var val = $.fn.dataTable.util.escapeRegex($(this).val());
         dataTable.column(3).search(val ? '^' + val + '$' : '', true, false).draw();
-        actualizarContador(); // <-- Actualiza el número al seleccionar
+        actualizarContador();
     });
 
-    // Filtro ESTADO (Select)
+    // Filtro ESTADO (Select - Columna 6)
     $('#filtroEstado').off('change').on('change', function() {
         var val = $.fn.dataTable.util.escapeRegex($(this).val());
         dataTable.column(6).search(val ? '^' + val + '$' : '', true, false).draw();
-        actualizarContador(); // <-- Actualiza el número al seleccionar
+        actualizarContador();
     });
 }
     /* ══════════════════════════════════════
