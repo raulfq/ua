@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -222,6 +223,106 @@
             font-weight: bold;
             color: white;
         }
+
+        .dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+.card-dashboard{
+    background: var(--fondo-paneles);
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.25);
+    border-left:5px solid var(--azul-institucional);
+}
+
+.card-dashboard h3{
+    margin:0;
+    font-size:1rem;
+    color:#a0aec0;
+}
+
+.card-dashboard p{
+    margin-top:15px;
+    font-size:2rem;
+    font-weight:bold;
+    color:white;
+}
+
+.graficos-dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+    margin-top:25px;
+}
+
+.grafico-card{
+    background: var(--fondo-paneles);
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.25);
+}
+
+.grafico-card h3{
+    color:white;
+    margin-bottom:20px;
+}
+
+.area-box{
+    background:#1f2937;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+.area-box h4{
+    margin-top:0;
+    color:#4a86e8;
+}
+
+.equipo-item{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 12px;
+    margin-bottom:8px;
+    border-radius:8px;
+    background:#111827;
+}
+
+.badge-activo{
+    background:#16a34a;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.badge-inactivo{
+    background:#dc2626;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.full-width-dashboard{
+    grid-column: 1 / -1;
+}
+
+.equipos-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.areas-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
     </style>
 </head>
 <body>
@@ -230,9 +331,10 @@
     <h1>Inventario TI</h1>
 
     <div class="tabs">
-        <div class="tab-btn active" onclick="openTab('registro')">📝 REGISTRO</div>
-        <div class="tab-btn" onclick="openTab('consulta')">📊 LISTADO</div>
-    </div>
+    <div class="tab-btn active" onclick="openTab('registro')">📝 REGISTRO</div>
+    <div class="tab-btn" onclick="openTab('consulta')">📊 LISTADO</div>
+    <div class="tab-btn" onclick="openTab('dashboard')">📈 DASHBOARD</div>
+</div>
 
     <div id="mensaje" style="display:none; padding:10px; border-radius:5px; margin-bottom:10px;"></div>
 
@@ -346,7 +448,68 @@
         </div>
     </div>
 </div>
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="dashboard" class="tab-content">
 
+    <div class="dashboard-grid">
+
+        <div class="card-dashboard">
+            <h3>🖥️ Registros Totales</h3>
+            <p id="cardTotalRegistros">0</p>
+        </div>
+
+        <div class="card-dashboard">
+            <h3>💻 Equipos Únicos</h3>
+            <p id="cardEquiposUnicos">0</p>
+        </div>
+
+        <div class="card-dashboard">
+            <h3>🟢 Activos</h3>
+            <p id="cardActivos">0</p>
+        </div>
+
+        <div class="card-dashboard">
+            <h3>🔴 Inactivos</h3>
+            <p id="cardInactivos">0</p>
+        </div>
+
+        <div class="card-dashboard">
+            <h3>⚠️ Duplicados</h3>
+            <p id="cardDuplicados">0</p>
+        </div>
+
+    </div>
+
+    <div class="graficos-dashboard">
+
+    <div class="grafico-card">
+        <h3>📊 Estado de Equipos</h3>
+        <canvas id="graficoEstados"></canvas>
+    </div>
+
+    <div class="grafico-card">
+        <h3>🏢 Equipos por Piso</h3>
+        <canvas id="graficoPisos"></canvas>
+    </div>
+        <div class="grafico-card full-width-dashboard">
+
+    <h3>🏢 Equipos por Piso y Área</h3>
+
+    <select id="selectPisoDashboard"
+        style="margin-bottom:20px;">
+
+        <option value="">
+            Seleccione un piso
+        </option>
+
+    </select>
+
+    <div id="detallePisoDashboard"></div>
+
+</div>
+</div>
+
+</div>
 <!-- ══════════════ MODAL EDITAR ══════════════ -->
 <div id="modalEditar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
     <div style="background:#2d3748; padding:25px; border-radius:10px; width:90%; max-width:500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -386,6 +549,8 @@
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <script>
     const URL_APP_SCRIPT = "https://script.google.com/macros/s/AKfycby_c5eCrb27fWb-sOdprSX3yeRqmGGUpI3xDUMhozzx-WMsJF2odm3adyUHstHVbATp/exec";
@@ -397,7 +562,8 @@
         $('#' + tabId).addClass('active');
         $('.tab-btn[onclick="openTab(\'' + tabId + '\')"]').addClass('active');
         if (tabId === 'consulta') cargarDatos();
-    }
+        if (tabId === 'dashboard') cargarDashboard();
+    }   
 
     /* ── MENSAJE GLOBAL ── */
     function mostrarMensaje(texto, tipo) {
@@ -451,6 +617,279 @@
        CARGAR DATOS + DATATABLES
     ══════════════════════════════════════ */
     let dataTable = null;
+    let chartEstados = null;
+let chartPisos = null;
+   async function cargarDashboard() {
+
+    try {
+
+        const response =
+            await fetch(URL_APP_SCRIPT + "?dashboard=true");
+
+        const stats = await response.json();
+
+        // ─────────────────────────────
+        // CARDS
+        // ─────────────────────────────
+
+        document.getElementById('cardTotalRegistros').innerText =
+            stats.totalRegistros || 0;
+
+        document.getElementById('cardEquiposUnicos').innerText =
+            stats.equiposUnicos || 0;
+
+        document.getElementById('cardActivos').innerText =
+            stats.activos || 0;
+
+        document.getElementById('cardInactivos').innerText =
+            stats.inactivos || 0;
+
+        document.getElementById('cardDuplicados').innerText =
+            stats.duplicados || 0;
+
+        // ─────────────────────────────
+        // GRÁFICO ESTADOS
+        // ─────────────────────────────
+
+        if(chartEstados){
+            chartEstados.destroy();
+        }
+
+        const ctxEstados =
+            document.getElementById('graficoEstados');
+
+        chartEstados = new Chart(ctxEstados, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: ['ACTIVOS', 'INACTIVOS'],
+
+                datasets: [{
+
+                    data: [
+                        stats.activos,
+                        stats.inactivos
+                    ],
+
+                    backgroundColor: [
+                        '#2ecc71',
+                        '#e74c3c'
+                    ],
+
+                    borderRadius: 8
+
+                }]
+
+            },
+
+            options: {
+
+                responsive:true,
+
+                plugins:{
+                    legend:{
+                        display:false
+                    }
+                }
+
+            }
+
+        });
+
+        // ─────────────────────────────
+        // GRÁFICO PISOS
+        // ─────────────────────────────
+
+        if(chartPisos){
+            chartPisos.destroy();
+        }
+
+        const pisos = Object.keys(stats.pisos);
+        const cantidades = Object.values(stats.pisos);
+
+        const ctxPisos =
+            document.getElementById('graficoPisos');
+
+        chartPisos = new Chart(ctxPisos, {
+
+            type:'bar',
+
+            data:{
+
+                labels: pisos,
+
+                datasets:[{
+
+                    data:cantidades,
+
+                    backgroundColor:'#4a86e8',
+
+                    borderRadius:8
+
+                }]
+
+            },
+
+            options:{
+
+                responsive:true,
+
+                plugins:{
+                    legend:{
+                        display:false
+                    }
+                }
+
+            }
+
+        });
+
+        // ─────────────────────────────
+        // SELECT PISOS
+        // ─────────────────────────────
+
+        const selectPiso =
+            document.getElementById(
+                'selectPisoDashboard'
+            );
+
+        selectPiso.innerHTML =
+            '<option value="">Seleccione un piso</option>';
+
+        Object.keys(stats.pisosDetalle)
+        .forEach(piso => {
+
+            selectPiso.innerHTML += `
+                <option value="${piso}">
+                    ${piso}
+                </option>
+            `;
+
+        });
+
+        // ─────────────────────────────
+        // CAMBIO DE PISO
+        // ─────────────────────────────
+
+        selectPiso.onchange = function(){
+
+            const pisoSeleccionado = this.value;
+
+            const contenedor =
+                document.getElementById(
+                    'detallePisoDashboard'
+                );
+
+            contenedor.innerHTML = '';
+
+            if(!pisoSeleccionado) return;
+
+            const areas =
+                stats.pisosDetalle[pisoSeleccionado];
+
+            Object.keys(areas).forEach(area => {
+
+                let htmlEquipos = '';
+
+                const conteo = {};
+
+areas[area].forEach(eq => {
+    const tipo = eq.tipo || 'SIN TIPO';
+
+    if (!conteo[tipo]) {
+        conteo[tipo] = {
+            ACTIVO: 0,
+            INACTIVO: 0,
+            TOTAL: 0
+        };
+    }
+
+    conteo[tipo][eq.estado] = (conteo[tipo][eq.estado] || 0) + 1;
+    conteo[tipo].TOTAL++;
+});
+
+
+
+Object.keys(conteo).forEach(tipo => {
+
+    htmlEquipos += `
+        <div class="equipo-item">
+            <div>
+                <strong>${tipo}</strong><br>
+                <small style="color:#a0aec0;">
+                    Total: ${conteo[tipo].TOTAL} |
+                    🟢 ${conteo[tipo].ACTIVO || 0} |
+                    🔴 ${conteo[tipo].INACTIVO || 0}
+                </small>
+            </div>
+        </div>
+    `;
+});
+
+      let areasHTML = "";
+
+Object.keys(areas).forEach(area => {
+
+    let htmlEquipos = '';
+    const conteo = {};
+
+    areas[area].forEach(eq => {
+        const tipo = eq.tipo || 'SIN TIPO';
+
+        if (!conteo[tipo]) {
+            conteo[tipo] = { ACTIVO: 0, INACTIVO: 0, TOTAL: 0 };
+        }
+
+        conteo[tipo][eq.estado] = (conteo[tipo][eq.estado] || 0) + 1;
+        conteo[tipo].TOTAL++;
+    });
+
+    Object.keys(conteo).forEach(tipo => {
+        htmlEquipos += `
+            <div class="equipo-item">
+                <div>
+                    <strong>${tipo}</strong><br>
+                    <small style="color:#a0aec0;">
+                        Total: ${conteo[tipo].TOTAL} |
+                        🟢 ${conteo[tipo].ACTIVO || 0} |
+                        🔴 ${conteo[tipo].INACTIVO || 0}
+                    </small>
+                </div>
+            </div>
+        `;
+    });
+
+    areasHTML += `
+        <div class="area-box">
+            <h4>${area}</h4>
+            ${htmlEquipos}
+        </div>
+    `;
+});
+
+contenedor.innerHTML = `
+    <div class="areas-grid">
+        ${areasHTML}
+    </div>
+`;
+            });
+
+        };
+
+    } catch(error){
+
+        console.error(error);
+
+        mostrarMensaje(
+            "❌ Error cargando dashboard",
+            "error"
+        );
+
+    }
+
+}
 
     async function cargarDatos() {
         $('#loader').show();
