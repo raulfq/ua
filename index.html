@@ -159,13 +159,21 @@
             min-width: 130px;
         }
 
-        td:nth-child(5),
-        td:nth-child(6) {
-            white-space: normal !important;
-            word-break: break-word;
-            max-width: 220px;
-        }
+        #tablaInventario td:nth-child(6), /* ÁREA */
+#tablaInventario td:nth-child(7), /* USUARIO */
+#tablaInventario td:nth-child(9)  /* NOTAS */
+{
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    vertical-align: top;
+}
 
+/* NOTAS más ancha */
+#tablaInventario td:nth-child(9) {
+    min-width: 280px !important;
+    max-width: 400px;
+}
         table.dataTable tbody tr {
             border-bottom: 1px solid #4a5568;
         }
@@ -552,6 +560,7 @@
                         <th>ÁREA</th>
                         <th>USUARIO</th>
                         <th>ESTADO</th>
+                        <th>NOTAS</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
@@ -1164,6 +1173,8 @@ async function cargarDatos() {
                 <td>${reg.area || '-'}</td>
                 <td>${reg.usuario || '-'}</td>
                 <td>${reg.estado || '-'}</td>
+                <td>${reg.notas || '-'}</td>
+
                 <td>
                     <button class="btn btn-sm btn-warning" onclick='editar(${JSON.stringify(reg)})'>✏️</button>
                     <button class="btn btn-sm btn-danger" onclick='eliminar(this, "${reg.id_activo}")'>🗑️</button>
