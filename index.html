@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -349,9 +348,79 @@
     </style>
 </head>
 <body>
+<!-- ══════════════ PANTALLA LOGIN ══════════════ -->
+<div id="pantallaLogin" style="
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #202b38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+">
+    <div style="
+        background: #2d3748;
+        padding: 40px;
+        border-radius: 14px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        text-align: center;
+    ">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🖥️</div>
+        <h2 style="color: #4a86e8; margin-bottom: 5px;">Inventario TI</h2>
+        <p style="color: #a0aec0; margin-bottom: 30px; font-size: 0.9rem;">Acceso restringido al personal autorizado</p>
 
+        <div id="loginError" style="
+            display: none;
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        "></div>
+
+        <input type="text" id="loginUsuario"
+            placeholder="👤 Usuario"
+            style="margin-bottom: 12px; text-align: left;"
+            onkeydown="if(event.key==='Enter') doLogin()">
+
+        <input type="password" id="loginClave"
+            placeholder="🔒 Contraseña"
+            style="margin-bottom: 20px; text-align: left;"
+            onkeydown="if(event.key==='Enter') doLogin()">
+
+        <button id="btnLogin" onclick="doLogin()" style="
+            background: #4a86e8;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 8px;
+            transition: background 0.2s;
+        ">🔑 INGRESAR</button>
+
+        <p style="color: #4a5568; font-size: 0.75rem; margin-top: 20px;">
+            UALN · Sistema de Inventario TI
+        </p>
+    </div>
+</div>
 <div class="main-container">
-    <h1>Inventario TI</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:10px;">
+    <h1 style="margin:0;">Inventario TI</h1>
+    <div style="display:flex; align-items:center; gap:12px;">
+        <span id="usuarioActivo" style="color:#a0aec0; font-size:0.9rem;"></span>
+        <button onclick="cerrarSesion()" style="
+            background:#e74c3c; color:white; border:none;
+            padding:8px 14px; border-radius:6px;
+            cursor:pointer; font-size:0.85rem; font-weight:bold;
+        ">🚪 Salir</button>
+    </div>
+</div>
 
     <div class="tabs">
     <div class="tab-btn active" onclick="openTab('registro')">📝 REGISTRO</div>
@@ -374,7 +443,18 @@
                     <label>Número de Serie</label>
                     <input type="text" name="serie" placeholder="S/N: XXXXXXXX" required>
                 </div>
-                
+                                <div class="form-group">
+                    <label>Bloque</label>
+
+                    <select name="bloque" required>
+                        <option value="" disabled selected>
+                            Seleccione bloque...
+                        </option>
+
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Ubicación</label>
                     <select name="piso" required>
@@ -429,9 +509,16 @@
             <input type="text" id="filtroEquipo" placeholder="🖥️ Buscar por equipo" style="flex:1; min-width:150px;">
             <input type="text" id="filtroSerie" placeholder="🔍 Buscar por serie" style="flex:1; min-width:150px;">
 
+
             <input type="text" id="filtroUsuario" placeholder="👤 Buscar por usuario" style="flex:1; min-width:150px;">
             <input type="text" id="filtroArea" placeholder="🏢 Buscar por área" style="flex:1; min-width:150px;">
+            <select id="filtroBloque" style="flex:1; min-width:120px;">
+    <option value="">🏢 Todos los bloques</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+</select>
             <select id="filtroPiso" style="flex:1; min-width:150px;">
+
     <option value="">🏢 Todos los pisos</option>
     <option value="Piso 1">Piso 1</option>
     <option value="Piso 2">Piso 2</option>
@@ -439,6 +526,7 @@
     <option value="Piso 4">Piso 4</option>
     <option value="Piso 5">Piso 5</option>
 </select>
+
             <select id="filtroEstado" style="flex:1; min-width:120px;">
                 <option value="">Todos los estados</option>
                 <option value="ACTIVO">ACTIVO</option>
@@ -459,6 +547,7 @@
                         <th>ID ACTIVO</th>
                         <th>EQUIPO</th>
                         <th>SERIE</th>
+                        <th>BLOQUE</th>
                         <th>PISO</th>
                         <th>ÁREA</th>
                         <th>USUARIO</th>
@@ -510,24 +599,41 @@
         <canvas id="graficoEstados"></canvas>
     </div>
 
-    <div class="grafico-card">
-        <h3>🏢 Equipos por Piso</h3>
-        <canvas id="graficoPisos"></canvas>
+   <div class="grafico-card">
+    <h3>🏢 Equipos por Piso</h3>
+    <div style="margin-bottom:15px;">
+        <select id="selectBloqueGraficoPisos" style="width:auto; padding:6px 12px;">
+            <option value="A" selected>Bloque A</option>
+            <option value="B">Bloque B</option>
+        </select>
     </div>
+    <canvas id="graficoPisos"></canvas>
+</div>
         <div class="grafico-card full-width-dashboard">
 
     <h3>🏢 Equipos por Piso y Área</h3>
 
-    <select id="selectPisoDashboard"
-        style="margin-bottom:20px;">
+    
 
-        <option value="">
-            Seleccione un piso
-        </option>
+<select id="selectPisoDashboard"
+    style="margin-bottom:20px;">
 
-    </select>
+    <option value="">
+        Seleccione un piso
+    </option>
 
-    <div id="detallePisoDashboard"></div>
+</select>
+
+<select id="selectBloqueDashboard"
+    style="margin-bottom:20px;">
+
+    <option value="">
+        Todos los bloques
+    </option>
+
+</select>
+
+<div id="detallePisoDashboard"></div>
 
 </div>
 </div>
@@ -542,6 +648,11 @@
 
         <input type="text" id="edit_pc" placeholder="Nombre PC">
         <input type="text" id="edit_serie" placeholder="Serie">
+        <select id="edit_bloque">
+    <option value="">Seleccione bloque...</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+</select>
         <select id="edit_piso">
             <option value="">Seleccione el piso...</option>
             <option value="Piso 1">Piso 1</option>
@@ -576,8 +687,70 @@
 
 
 <script>
+    
     const URL_APP_SCRIPT = "https://script.google.com/macros/s/AKfycby_c5eCrb27fWb-sOdprSX3yeRqmGGUpI3xDUMhozzx-WMsJF2odm3adyUHstHVbATp/exec";
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
+function doLogin() {
+    const usuario = document.getElementById('loginUsuario').value.trim();
+    const clave   = document.getElementById('loginClave').value.trim();
+    const btn     = document.getElementById('btnLogin');
+    const error   = document.getElementById('loginError');
 
+    if (!usuario || !clave) {
+        error.style.display = 'block';
+        error.innerText = '⚠️ Completa todos los campos';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = 'Verificando...';
+    error.style.display = 'none';
+
+    fetch(URL_APP_SCRIPT, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'login', usuario, clave })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === 'ok') {
+            // Guardar sesión simple en sessionStorage
+            sessionStorage.setItem('loginOk', '1');
+            sessionStorage.setItem('loginUsuario', res.nombre);
+
+            document.getElementById('pantallaLogin').style.display = 'none';
+            document.getElementById('usuarioActivo').innerText = '👤 ' + res.nombre;
+        } else {
+            error.style.display = 'block';
+            error.innerText = '❌ ' + res.mensaje;
+        }
+    })
+    .catch(() => {
+        error.style.display = 'block';
+        error.innerText = '❌ Error de conexión';
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerText = '🔑 INGRESAR';
+    });
+}
+function cerrarSesion() {
+    if (!confirm('¿Cerrar sesión?')) return;
+    sessionStorage.clear();
+    document.getElementById('pantallaLogin').style.display = 'flex';
+    document.getElementById('loginUsuario').value = '';
+    document.getElementById('loginClave').value = '';
+    document.getElementById('loginError').style.display = 'none';
+}
+// Verificar si ya hay sesión activa al cargar
+window.addEventListener('load', function() {
+    if (sessionStorage.getItem('loginOk') === '1') {
+        document.getElementById('pantallaLogin').style.display = 'none';
+        document.getElementById('usuarioActivo').innerText =
+            '👤 ' + sessionStorage.getItem('loginUsuario');
+    }
+});
     /* ── PESTAÑAS ── */
     function openTab(tabId) {
         $('.tab-content').removeClass('active');
@@ -725,50 +898,67 @@ let chartPisos = null;
         // GRÁFICO PISOS
         // ─────────────────────────────
 
-        if(chartPisos){
-            chartPisos.destroy();
-        }
+        // ─────────────────────────────
+// GRÁFICO PISOS (con filtro bloque)
+// ─────────────────────────────
 
-        const pisos = Object.keys(stats.pisos);
-        const cantidades = Object.values(stats.pisos);
+function renderGraficoPisos(bloqueSeleccionado) {
 
-        const ctxPisos =
-            document.getElementById('graficoPisos');
+    // Contar equipos por piso filtrando por bloque
+    var conteoFiltrado = {};
 
-        chartPisos = new Chart(ctxPisos, {
+    Object.keys(stats.pisosDetalle).forEach(function(piso) {
 
-            type:'bar',
+        var total = 0;
 
-            data:{
+        Object.keys(stats.pisosDetalle[piso]).forEach(function(area) {
 
-                labels: pisos,
+            stats.pisosDetalle[piso][area].forEach(function(eq) {
 
-                datasets:[{
+                if (eq.bloque === bloqueSeleccionado) total++;
 
-                    data:cantidades,
-
-                    backgroundColor:'#4a86e8',
-
-                    borderRadius:8
-
-                }]
-
-            },
-
-            options:{
-
-                responsive:true,
-
-                plugins:{
-                    legend:{
-                        display:false
-                    }
-                }
-
-            }
+            });
 
         });
 
+        if (total > 0) conteoFiltrado[piso] = total;
+
+    });
+
+    var labelsPisos = Object.keys(conteoFiltrado);
+    var valoresPisos = Object.values(conteoFiltrado);
+
+    if (chartPisos) chartPisos.destroy();
+
+    const ctxPisos = document.getElementById('graficoPisos');
+
+    chartPisos = new Chart(ctxPisos, {
+        type: 'bar',
+        data: {
+            labels: labelsPisos,
+            datasets: [{
+                data: valoresPisos,
+                backgroundColor: '#4a86e8',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+// Render inicial con bloque A por defecto
+renderGraficoPisos('A');
+
+// Evento del select
+document.getElementById('selectBloqueGraficoPisos')
+    .addEventListener('change', function() {
+        renderGraficoPisos(this.value);
+    });
         // ─────────────────────────────
         // SELECT PISOS
         // ─────────────────────────────
@@ -796,110 +986,133 @@ let chartPisos = null;
         // CAMBIO DE PISO
         // ─────────────────────────────
 
-        selectPiso.onchange = function(){
+      // ─────────────────────────────
+// SELECT BLOQUES
+// ─────────────────────────────
 
-            const pisoSeleccionado = this.value;
+const selectBloque =
+    document.getElementById(
+        'selectBloqueDashboard'
+    );
 
-            const contenedor =
-                document.getElementById(
-                    'detallePisoDashboard'
-                );
+selectBloque.innerHTML =
+    '<option value="">Todos los bloques</option>';
 
-            contenedor.innerHTML = '';
+['A', 'B'].forEach(bloque => {
 
-            if(!pisoSeleccionado) return;
-
-            const areas =
-                stats.pisosDetalle[pisoSeleccionado];
-
-            Object.keys(areas).forEach(area => {
-
-                let htmlEquipos = '';
-
-                const conteo = {};
-
-areas[area].forEach(eq => {
-    const tipo = eq.tipo || 'SIN TIPO';
-
-    if (!conteo[tipo]) {
-        conteo[tipo] = {
-            ACTIVO: 0,
-            INACTIVO: 0,
-            TOTAL: 0
-        };
-    }
-
-    conteo[tipo][eq.estado] = (conteo[tipo][eq.estado] || 0) + 1;
-    conteo[tipo].TOTAL++;
-});
-
-
-
-Object.keys(conteo).forEach(tipo => {
-
-    htmlEquipos += `
-        <div class="equipo-item">
-            <div>
-                <strong>${tipo}</strong><br>
-                <small style="color:#a0aec0;">
-                    Total: ${conteo[tipo].TOTAL} |
-                    🟢 ${conteo[tipo].ACTIVO || 0} |
-                    🔴 ${conteo[tipo].INACTIVO || 0}
-                </small>
-            </div>
-        </div>
+    selectBloque.innerHTML += `
+        <option value="${bloque}">
+            Bloque ${bloque}
+        </option>
     `;
+
 });
 
-      let areasHTML = "";
+// ─────────────────────────────
+// RENDER DASHBOARD
+// ─────────────────────────────
 
-Object.keys(areas).forEach(area => {
+function renderDetalleDashboard() {
 
-    let htmlEquipos = '';
-    const conteo = {};
+    const pisoSeleccionado =
+        selectPiso.value;
 
-    areas[area].forEach(eq => {
-        const tipo = eq.tipo || 'SIN TIPO';
+    const bloqueSeleccionado =
+        selectBloque.value;
 
-        if (!conteo[tipo]) {
-            conteo[tipo] = { ACTIVO: 0, INACTIVO: 0, TOTAL: 0 };
-        }
+    const contenedor =
+        document.getElementById(
+            'detallePisoDashboard'
+        );
 
-        conteo[tipo][eq.estado] = (conteo[tipo][eq.estado] || 0) + 1;
-        conteo[tipo].TOTAL++;
-    });
+    contenedor.innerHTML = '';
 
-    Object.keys(conteo).forEach(tipo => {
-        htmlEquipos += `
-            <div class="equipo-item">
-                <div>
-                    <strong>${tipo}</strong><br>
-                    <small style="color:#a0aec0;">
-                        Total: ${conteo[tipo].TOTAL} |
-                        🟢 ${conteo[tipo].ACTIVO || 0} |
-                        🔴 ${conteo[tipo].INACTIVO || 0}
-                    </small>
-                </div>
-            </div>
-        `;
-    });
+    if(!pisoSeleccionado) return;
 
-    areasHTML += `
-        <div class="area-box">
-            <h4>${area}</h4>
-            ${htmlEquipos}
-        </div>
-    `;
-});
+    const areas =
+        stats.pisosDetalle[pisoSeleccionado];
 
-contenedor.innerHTML = `
-    <div class="areas-grid">
-        ${areasHTML}
-    </div>
-`;
+    let areasHTML = "";
+
+    Object.keys(areas).forEach(area => {
+
+        let htmlEquipos = '';
+
+        const conteo = {};
+
+        // FILTRAR POR BLOQUE
+        const equiposFiltrados =
+            areas[area].filter(eq => {
+
+                if(!bloqueSeleccionado)
+                    return true;
+
+                return eq.bloque === bloqueSeleccionado;
+
             });
 
-        };
+        if(equiposFiltrados.length === 0)
+            return;
+
+        equiposFiltrados.forEach(eq => {
+
+            const tipo =
+                eq.tipo || 'SIN TIPO';
+
+            if (!conteo[tipo]) {
+
+                conteo[tipo] = {
+                    ACTIVO: 0,
+                    INACTIVO: 0,
+                    TOTAL: 0
+                };
+
+            }
+
+            conteo[tipo][eq.estado] =
+                (conteo[tipo][eq.estado] || 0) + 1;
+
+            conteo[tipo].TOTAL++;
+
+        });
+
+        Object.keys(conteo).forEach(tipo => {
+
+            htmlEquipos += `
+                <div class="equipo-item">
+                    <div>
+                        <strong>${tipo}</strong><br>
+
+                        <small style="color:#a0aec0;">
+                            Total: ${conteo[tipo].TOTAL} |
+                            🟢 ${conteo[tipo].ACTIVO || 0} |
+                            🔴 ${conteo[tipo].INACTIVO || 0}
+                        </small>
+                    </div>
+                </div>
+            `;
+
+        });
+
+        areasHTML += `
+            <div class="area-box">
+                <h4>${area}</h4>
+                ${htmlEquipos}
+            </div>
+        `;
+
+    });
+
+    contenedor.innerHTML = `
+        <div class="areas-grid">
+            ${areasHTML}
+        </div>
+    `;
+}
+
+// EVENTOS
+selectPiso.onchange = renderDetalleDashboard;
+selectBloque.onchange = renderDetalleDashboard;;
 
     } catch(error){
 
@@ -914,63 +1127,123 @@ contenedor.innerHTML = `
 
 }
 
-    async function cargarDatos() {
-        $('#loader').show();
-        try {
-            const response = await fetch(URL_APP_SCRIPT + "?read=true");
-            const data = await response.json();
+  /* ══════════════════════════════════════
+   CARGAR DATOS + DATATABLES
+══════════════════════════════════════ */
+async function cargarDatos() {
+    $('#loader').show();
 
-            // Destruir instancia previa antes de reconstruir el tbody
-            if (dataTable) {
-                dataTable.destroy();
-                dataTable = null;
-            }
+    // ── GUARDAR ESTADO DE FILTROS ANTES DE DESTRUIR ──
+    const estadoFiltros = {
+        equipo:  $('#filtroEquipo').val(),
+        serie:   $('#filtroSerie').val(),
+        usuario: $('#filtroUsuario').val(),
+        area:    $('#filtroArea').val(),
+        bloque:  $('#filtroBloque').val(),
+        piso:    $('#filtroPiso').val(),
+        estado:  $('#filtroEstado').val(),
+        pagina:  dataTable ? dataTable.page() : 0
+    };
 
-            const html = data.map(reg => `
-                <tr>
-                    <td><span style="color:#4a86e8;font-weight:bold;">${reg.id_activo || '-'}</span></td>
-                    <td>${reg.nombre_de_pc || '-'}</td>
-                    <td>${reg.serie || '-'}</td>
-                    <td>${reg.piso || '-'}</td>
-                    <td>${reg.area || '-'}</td>
-                    <td>${reg.usuario || '-'}</td>
-                    <td>${reg.estado || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" onclick='editar(${JSON.stringify(reg)})'>✏️</button>
-                        <button class="btn btn-sm btn-danger" onclick='eliminar(this, "${reg.id_activo}")'>🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+    try {
+        const response = await fetch(URL_APP_SCRIPT + "?read=true");
+        const data = await response.json();
 
-            document.getElementById('cuerpoTabla').innerHTML = html;
-
-            dataTable = $('#tablaInventario').DataTable({
-                scrollX: true,
-                autoWidth: true,
-                responsive: false,
-                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
-                pageLength: 10,
-                dom: 'Btp',
-                               buttons: [{
-                    extend: 'excelHtml5',
-                    text: '📥 Exportar Excel',
-                    title: '',
-                    exportOptions: {
-                        columns: ':not(:last-child)' // ❌ excluye ACCIONES
-                    }
-                }]
-            });
-
-            /* ── Filtros: solo vincular tras crear DataTable ── */   // ✅ FIX: evita "dataTable is null"
-            vincularFiltros();
-
-        } catch (error) {
-            console.error(error);
-            mostrarMensaje("❌ Error al cargar datos", "error");
-        } finally {
-            $('#loader').hide();
+        if (dataTable) {
+            dataTable.destroy();
+            dataTable = null;
         }
+
+        const html = data.map(reg => `
+            <tr>
+                <td><span style="color:#4a86e8;font-weight:bold;">${reg.id_activo || '-'}</span></td>
+                <td>${reg.nombre_de_pc || '-'}</td>
+                <td>${reg.serie || '-'}</td>
+                <td>${reg.bloque || '-'}</td>
+                <td>${reg.piso || '-'}</td>
+                <td>${reg.area || '-'}</td>
+                <td>${reg.usuario || '-'}</td>
+                <td>${reg.estado || '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick='editar(${JSON.stringify(reg)})'>✏️</button>
+                    <button class="btn btn-sm btn-danger" onclick='eliminar(this, "${reg.id_activo}")'>🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+
+        document.getElementById('cuerpoTabla').innerHTML = html;
+
+        dataTable = $('#tablaInventario').DataTable({
+            scrollX: true,
+            autoWidth: true,
+            responsive: false,
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+            pageLength: 10,
+            dom: 'Btp',
+            buttons: [{
+                extend: 'excelHtml5',
+                text: '📥 Exportar Excel',
+                title: '',
+                exportOptions: { columns: ':not(:last-child)' }
+            }]
+        });
+
+        // ── RESTAURAR FILTROS ──
+        restaurarFiltros(estadoFiltros);
+
+    } catch (error) {
+        console.error(error);
+        mostrarMensaje("❌ Error al cargar datos", "error");
+    } finally {
+        $('#loader').hide();
     }
+}
+
+/* ══════════════════════════════════════
+   RESTAURAR FILTROS TRAS RECONSTRUIR
+══════════════════════════════════════ */
+function restaurarFiltros(f) {
+
+    // Restaurar valores visuales en los inputs/selects
+    $('#filtroEquipo').val(f.equipo);
+    $('#filtroSerie').val(f.serie);
+    $('#filtroUsuario').val(f.usuario);
+    $('#filtroArea').val(f.area);
+    $('#filtroBloque').val(f.bloque);
+    $('#filtroPiso').val(f.piso);
+    $('#filtroEstado').val(f.estado);
+
+    // Aplicar búsquedas en DataTable
+    if (f.equipo)  dataTable.column(1).search(f.equipo);
+    if (f.serie)   dataTable.column(2).search(f.serie);
+    if (f.usuario) dataTable.column(6).search(f.usuario);
+    if (f.area)    dataTable.column(5).search(f.area);
+
+    if (f.bloque) {
+        const val = $.fn.dataTable.util.escapeRegex(f.bloque);
+        dataTable.column(3).search('^' + val + '$', true, false);
+    }
+    if (f.piso) {
+        const val = $.fn.dataTable.util.escapeRegex(f.piso);
+        dataTable.column(4).search('^' + val + '$', true, false);
+    }
+    if (f.estado) {
+        const val = $.fn.dataTable.util.escapeRegex(f.estado);
+        dataTable.column(7).search('^' + val + '$', true, false);
+    }
+
+    // Dibujar con filtros y restaurar página
+    dataTable.draw();
+
+    // Intentar volver a la misma página (si aún existe)
+    const totalPaginas = dataTable.page.info().pages;
+    const paginaValida = f.pagina < totalPaginas ? f.pagina : 0;
+    dataTable.page(paginaValida).draw('page');
+
+    // Vincular eventos y actualizar contador
+    vincularFiltros();
+    actualizarContador();
+}
 
 /* Función para actualizar las cifras del contador */
 function actualizarContador() {
@@ -987,42 +1260,88 @@ function actualizarContador() {
 /* Vincular filtros con actualización de contador en tiempo real */
 /* Vincular filtros con actualización de contador en tiempo real */
 function vincularFiltros() {
-    
-    // Actualizamos el contador apenas se carga la tabla
+
     actualizarContador();
 
-    // Filtros de texto (Equipo, Serie, Usuario, ÁREA)
-    $('#filtroEquipo, #filtroSerie, #filtroUsuario, #filtroArea').off('keyup').on('keyup', function() {
+    // FILTROS TEXTO
+    $('#filtroEquipo, #filtroSerie, #filtroUsuario, #filtroArea')
+    .off('keyup')
+    .on('keyup', function() {
+
         const id = $(this).attr('id');
         let colIndex;
 
-        // Asignación de índices según el HTML de tu tabla
         switch(id) {
-            case 'filtroEquipo': colIndex = 1; break;
-            case 'filtroSerie':  colIndex = 2; break;
-            case 'filtroArea':   colIndex = 4; break; // Columna ÁREA
-            case 'filtroUsuario': colIndex = 5; break;
+
+            case 'filtroEquipo':
+                colIndex = 1;
+                break;
+
+            case 'filtroSerie':
+                colIndex = 2;
+                break;
+
+            case 'filtroArea':
+                colIndex = 5;
+                break;
+
+            case 'filtroUsuario':
+                colIndex = 6;
+                break;
         }
 
-        dataTable.column(colIndex).search(this.value).draw();
-        actualizarContador(); 
-    });
+        dataTable.column(colIndex)
+            .search(this.value)
+            .draw();
 
-    // Filtro PISO (Select - Columna 3)
-    $('#filtroPiso').off('change').on('change', function() {
-        var val = $.fn.dataTable.util.escapeRegex($(this).val());
-        dataTable.column(3).search(val ? '^' + val + '$' : '', true, false).draw();
         actualizarContador();
     });
 
-    // Filtro ESTADO (Select - Columna 6)
-    $('#filtroEstado').off('change').on('change', function() {
-        var val = $.fn.dataTable.util.escapeRegex($(this).val());
-        dataTable.column(6).search(val ? '^' + val + '$' : '', true, false).draw();
+    // FILTRO PISO
+    $('#filtroPiso')
+    .off('change')
+    .on('change', function() {
+
+        var val = $.fn.dataTable.util
+            .escapeRegex($(this).val());
+
+        dataTable.column(4)
+            .search(val ? '^' + val + '$' : '', true, false)
+            .draw();
+
         actualizarContador();
     });
-}
-    /* ══════════════════════════════════════
+
+    // FILTRO BLOQUE
+    $('#filtroBloque')
+    .off('change')
+    .on('change', function() {
+
+        var val = $.fn.dataTable.util
+            .escapeRegex($(this).val());
+
+        dataTable.column(3)
+            .search(val ? '^' + val + '$' : '', true, false)
+            .draw();
+
+        actualizarContador();
+    });
+
+    // FILTRO ESTADO
+    $('#filtroEstado')
+    .off('change')
+    .on('change', function() {
+
+        var val = $.fn.dataTable.util
+            .escapeRegex($(this).val());
+
+        dataTable.column(7)
+            .search(val ? '^' + val + '$' : '', true, false)
+            .draw();
+
+        actualizarContador();
+    });
+} /* ══════════════════════════════════════
        EDITAR
     ══════════════════════════════════════ */
     function editar(reg) {
@@ -1030,6 +1349,7 @@ function vincularFiltros() {
         document.getElementById('edit_id').value      = reg.id_activo;
         document.getElementById('edit_pc').value      = reg.nombre_de_pc;
         document.getElementById('edit_serie').value   = reg.serie;
+        document.getElementById('edit_bloque').value = reg.bloque;
         document.getElementById('edit_piso').value    = reg.piso;
         document.getElementById('edit_area').value    = reg.area;
         document.getElementById('edit_usuario').value = reg.usuario;
@@ -1047,6 +1367,7 @@ function vincularFiltros() {
             id:        document.getElementById('edit_id').value,
             pc_nombre: document.getElementById('edit_pc').value,
             serie:     document.getElementById('edit_serie').value,
+            bloque: document.getElementById('edit_bloque').value,
             piso:      document.getElementById('edit_piso').value,
             area:      document.getElementById('edit_area').value,
             usuario:   document.getElementById('edit_usuario').value,
