@@ -1439,19 +1439,13 @@ function eliminar(btn, id) {
 
     fetch(URL_APP_SCRIPT, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
         body: JSON.stringify({ action: "eliminar", id: id })
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Error en la respuesta de red.");
-        return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
         if (data.status === "eliminado") {
             mostrarMensaje("✅ Registro eliminado correctamente", "ok");
-            cargarDatos(); // Sincroniza y refresca tu tabla
+            cargarDatos();
         } else {
             throw new Error("No se encontró el ID en la base de datos.");
         }
