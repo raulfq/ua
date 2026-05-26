@@ -1445,7 +1445,9 @@ function eliminar(btn, id) {
     .then(data => {
         if (data.status === "eliminado") {
             mostrarMensaje("✅ Registro eliminado correctamente", "ok");
-            cargarDatos();
+            // Elimina la fila directo del DataTable sin recargar
+            dataTable.row($(btn).closest('tr')).remove().draw(false);
+            actualizarContador();
         } else {
             throw new Error("No se encontró el ID en la base de datos.");
         }
